@@ -81,14 +81,55 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+
+    winner_x = ['X','X','X']
+    winner_o = ['O','O','O']
+    left_col = []
+    mid_col = []
+    right_col = []
+    left_diag = []
+    right_diag = []
+
+
+    for row in board:
+
+        if row == winner_x:
+            return X
+        
+        if row == winner_o:
+            return O
+        
+        left_col.append(row[0])
+        mid_col.append(row[1])
+        right_col.append(row[2])
+    
+    left_diag.extend([left_col[0],mid_col[1],right_col[2]])
+    right_diag.extend([left_col[2],mid_col[1],right_col[0]])
+
+    if left_col == winner_x or mid_col == winner_x or right_col == winner_x or left_diag == winner_x or right_diag == winner_x:
+        return X
+    
+    if left_col == winner_o or mid_col == winner_o or right_col == winner_o or left_diag == winner_o or right_diag == winner_o:
+        return O
+
+
+    return None
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+
+    if winner(board) != None:
+        return True
+
+    for row in board:
+
+        if None in row:
+            return False
+    
+    return True
 
 
 def utility(board):
@@ -108,14 +149,17 @@ def minimax(board):
 def main():
 
     board = [
-        ["O", "X", "X"],
         ["O", None, "O"],
-        ["X", "O", "X"]
+        ["X", None, "X"],
+        ["O", "X", "X"]
     ]
 
     # print(actions(board))
+                  
+    # print(result(board,action=(0,0)))
+    print(winner(board))
+    print(terminal(board))
 
-    print(result(board,action=(0,0)))
 
 if __name__ == '__main__':
     main()
