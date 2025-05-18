@@ -146,29 +146,80 @@ def utility(board):
     
     return 0
 
-    raise NotImplementedError
-
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    best_move = None
+
+    if terminal(board):
+        return None
+
+    if player(board) == X:
+        
+        best_score = -math.inf
+        best_move = None
+
+        for action in actions(board):
+            score = minimize(result(board,action))
+            if score > best_score:
+                best_move = action
+                best_score = score
+        return best_move
+    
+    else:
+        
+        best_score = math.inf
+        best_move = None
+
+        for action in actions(board):
+            score = maximize(result(board,action))
+            if score < best_score:
+                best_move = action
+                best_score = score
+        return best_move
+
+def maximize(board):
+    if terminal(board):
+        return utility(board)
+    max_eval = -math.inf
+
+    for action in actions(board):
+        eval = minimize(result(board,action))
+        if eval > max_eval:
+            max_eval = eval
+    return max_eval
+
+def minimize(board):
+    if terminal(board):
+        return utility(board)
+    min_eval = math.inf
+
+    for action in actions(board):
+        eval = maximize(result(board,action))
+        if eval < min_eval:
+            min_eval = eval
+        
+    return min_eval
+
+       
+
 
 
 def main():
 
     board = [
-        ["O", None, "O"],
-        ["X", None, "X"],
-        ["O", "X", "X"]
+        [None, None, None],
+        [None, None, None],
+        [None, None, None]
     ]
 
-    # print(actions(board))
+    print(actions(board))
                   
     # print(result(board,action=(0,0)))
-    print(winner(board))
-    print(terminal(board))
+    # print(winner(board))
+    # print(terminal(board))
 
 
 if __name__ == '__main__':
