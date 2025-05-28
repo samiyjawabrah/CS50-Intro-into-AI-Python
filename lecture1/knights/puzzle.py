@@ -25,17 +25,30 @@ knowledge0 = And(
 knowledge1 = And(
     Or(AKnight,AKnave),
     Not(And(AKnave,AKnight)),
+
     Or(BKnight,BKnave),
     Not(And(BKnave,BKnight)),
-    Implication(AKnave,And(AKnave,BKnave)),
-    Implication(BKnight,AKnave)
+
+    Implication(AKnight, And(AKnave, BKnave)),
+    Implication(AKnave, Not(And(AKnave,BKnave)))
 )
 
 # Puzzle 2
 # A says "We are the same kind."
 # B says "We are of different kinds."
 knowledge2 = And(
-    # TODO
+
+    Or(AKnight,AKnave),
+    Not(And(AKnave,AKnight)),
+
+    Or(BKnight,BKnave),
+    Not(And(BKnave,BKnight)),
+
+    Implication(AKnight, Or(And(AKnight,BKnight),And(AKnave,BKnave))),
+    Implication(AKnave, Not(Or(And(AKnight,BKnight),And(AKnave,BKnave)))),
+
+    Implication(BKnight, Or(And(AKnave,BKnight),And(AKnight,BKnave))),
+    Implication(BKnave, Not(Or(And(AKnave,BKnight),And(AKnight,BKnave))))
 )
 
 # Puzzle 3
@@ -45,6 +58,33 @@ knowledge2 = And(
 # C says "A is a knight."
 knowledge3 = And(
     # TODO
+    Or(AKnight,AKnave),
+    Not(And(AKnave,AKnight)),
+
+    Or(BKnight,BKnave),
+    Not(And(BKnave,BKnight)),
+
+    Or(CKnight,CKnave),
+    Not(And(CKnave,CKnight)),
+
+    # B says "C is a knave."
+    Implication(BKnight,CKnave),
+    Implication(BKnave,Not(CKnave)),
+
+    # C says "A is a knight."
+    Implication(CKnight,AKnight),
+    Implication(CKnave,Not(AKnight)),
+
+    # B says "A said 'I am a knave'."
+    Implication(BKnight,Implication(AKnight,AKnave)),
+    Implication(BKnight,Implication(AKnave,Not(AKnave))),
+
+
+
+    # A says either "I am a knight." or "I am a knave.", but you don't know which.
+    Implication(AKnight,Or(AKnight,AKnave)),
+    Implication(AKnave,Not(Or(AKnight,AKnave)))
+
 )
 
 
@@ -67,6 +107,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
 
-    print(model_check(knowledge1,AKnave))
+    # print(model_check(knowledge1,AKnave))
