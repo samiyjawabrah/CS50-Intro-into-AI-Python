@@ -202,16 +202,17 @@ class MinesweeperAI():
         j = cell[1]
         neighbors = {(i-1,j-1),(i-1,j),(i-1,j+1),(i,j-1),(i,j+1),(i+1,j-1),(i+1,j),(i+1,j+1)}
 
+        neighbors = {neighbor for neighbor in neighbors
+             if 0 <= neighbor[0] < self.height and 0 <= neighbor[1] < self.width}
+
         if count == 8:
             
             for neighbor in neighbors:
-                if neighbor[0] >= 0 and neighbor[1] >= 0 and neighbor[0] < self.width and neighbor[1] < self.height:
                     self.mark_mine(neighbor)
 
         if count == 0:
 
             for neighbor in neighbors:
-                if neighbor[0] >= 0 and neighbor[1] >= 0 and neighbor[0] < self.width and neighbor[1] < self.height:
                     self.mark_safe(neighbor)
 
         for mine in self.mines:
