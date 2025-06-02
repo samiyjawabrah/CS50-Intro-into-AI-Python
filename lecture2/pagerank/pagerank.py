@@ -15,10 +15,10 @@ def main():
     print(f"PageRank Results from Sampling (n = {SAMPLES})")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
-    ranks = iterate_pagerank(corpus, DAMPING)
-    print(f"PageRank Results from Iteration")
-    for page in sorted(ranks):
-        print(f"  {page}: {ranks[page]:.4f}")
+    # ranks = iterate_pagerank(corpus, DAMPING)
+    # print(f"PageRank Results from Iteration")
+    # for page in sorted(ranks):
+    #     print(f"  {page}: {ranks[page]:.4f}")
 
 
 def crawl(directory):
@@ -81,7 +81,7 @@ def transition_model(corpus, page, damping_factor):
 
     for link in links:
 
-        dictionary[links] = other_page_prob
+        dictionary[link] = other_page_prob
 
     return dictionary
 
@@ -96,19 +96,19 @@ def sample_pagerank(corpus, damping_factor, n):
     PageRank values should sum to 1.
     """
     sample = 0
-    dictionary = {link for link in corpus}
+    dictionary = {page:0 for page in corpus}
     cur_page = random.choice(list(corpus))
 
-    while sample <= n:
+    while sample < n:
 
-        dictionary[cur_page] = dictionary.get(0) + 1
+        dictionary[cur_page] += 1
 
-        if len(cur_page) == 0:
+        if not corpus[cur_page]:
 
             cur_page = random.choice(list(corpus))
 
         else: 
-            transition_prob = transition_model(corpus, cur_page, damping_factor=DAMPING)
+            transition_prob = transition_model(corpus, cur_page, damping_factor)
             
             weighted_list = []
             for key, value in transition_prob.items():
@@ -124,7 +124,9 @@ def sample_pagerank(corpus, damping_factor, n):
             cur_page = random.choice(weighted_list)
 
         sample += 1
-        
+
+    dictionary = {page: count/n for page,count in dictionary.items()}
+
     return dictionary
 
 def iterate_pagerank(corpus, damping_factor):
@@ -141,3 +143,4 @@ def iterate_pagerank(corpus, damping_factor):
 
 if __name__ == "__main__":
     main()
+  
