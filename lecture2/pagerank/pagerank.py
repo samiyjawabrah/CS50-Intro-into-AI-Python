@@ -15,10 +15,10 @@ def main():
     print(f"PageRank Results from Sampling (n = {SAMPLES})")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
-    # ranks = iterate_pagerank(corpus, DAMPING)
-    # print(f"PageRank Results from Iteration")
-    # for page in sorted(ranks):
-    #     print(f"  {page}: {ranks[page]:.4f}")
+    ranks = iterate_pagerank(corpus, DAMPING)
+    print(f"PageRank Results from Iteration")
+    for page in sorted(ranks):
+        print(f"  {page}: {ranks[page]:.4f}")
 
 
 def crawl(directory):
@@ -138,8 +138,48 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+   
+    n = len(corpus)
 
+    dictionary = {page: 1/n for page in corpus}
+
+    converge = True
+
+    while converge:
+
+        new_PR = {}
+
+        for page in corpus:
+
+            new_PR[page] = (1-damping_factor)/n
+
+            for other_page in corpus:
+
+                if page in corpus[other_page]:
+
+                    m = len(corpus[other_page])
+
+                    new_PR[page] =  new_PR[page] + damping_factor*(dictionary[other_page])/m
+
+                if len(corpus[other_page]) == 0:
+
+                    new_PR[page] = new_PR[page] + damping_factor*(dictionary[other_page])/n
+
+        count = n
+
+        for page in dictionary:
+
+            if dictionary[page] - new_PR[page] < 0.001:
+
+                count -=1
+        
+        if count == 0:
+            dictionary = new_PR
+            converge = False
+
+        dictionary = new_PR
+
+    return dictionary
 
 if __name__ == "__main__":
     main()
