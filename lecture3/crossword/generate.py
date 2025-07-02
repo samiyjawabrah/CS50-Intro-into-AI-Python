@@ -2,6 +2,8 @@ import sys
 
 from crossword import *
 
+from collections import deque
+
 
 class CrosswordCreator():
 
@@ -163,7 +165,46 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        agenda = deque()
+
+        if arcs == None:
+
+            for var1 in self.domains:
+                for var2 in self.domains:
+
+                    if var1 == var2:
+                        continue
+
+                    if self.crossword.overlaps[var1,var2] is not None:
+
+                        agenda.append((var1, var2))
+                        agenda.append((var2, var1))
+            
+        else:
+            agenda = deque(arcs) 
+
+        while agenda:
+
+            cur = agenda.popleft()
+
+            x = cur[0]
+            y = cur[1]
+
+            if self.revise(x,y):
+                 
+                 if len(self.domain[x]) == 0:
+                     
+                     return False
+                 
+                 neighbors = self.crossword.neighbors(x)
+
+                 for k in neighbors:
+                     
+                     if k != y:
+                         
+                        agenda.append((k,x))
+
+        return True
 
     def assignment_complete(self, assignment):
         """
