@@ -130,23 +130,28 @@ class CrosswordCreator():
 
         n = len(self.domains[x])
 
+        # print(self.domains[x])
+
         for word1 in self.domains[x].copy():
 
-            checked_all = False
+            has = False
 
-            for word2 in self.domains[y].copy():
+            for word2 in self.domains[y]:
 
-                if word1[i] != word2[j]:
+                if word1[i] == word2[j]: 
+
+                    has = True  
+                    break
+
+            if not has:
                     
-                    self.domains[x].remove(word1)
-
-            
-
-
+                self.domains[x].remove(word1)
 
         if n > len(self.domains[x]):
             return True
         
+        # print(self.domains[x])
+
         return False
 
     def ac3(self, arcs=None):
