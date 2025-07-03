@@ -273,7 +273,36 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        unassigned_dict_values = {}
+        unassigned_dict_neighbors = {}
+
+        for variable in self.domain:
+
+            if variable not in assignment:
+
+                #matches variable with len of num variables
+                unassigned_dict_values[variable] = len(self.domains[variable])
+
+                neighbors = self.crossword.neighbors[variable]
+
+                #matches variable with num of neighbors
+                unassigned_dict_neighbors[variable] = len(neighbors)
+        
+
+        min_value = min(unassigned_dict_values.values())
+
+        vars_w_min_words = [key for key, value in unassigned_dict_values.items() if value == min_value]
+
+        if len(vars_w_min_words) == 1:
+            return vars_w_min_words[0]
+        
+        elif len(vars_w_min_words) > 1:
+                
+            max_value = max(unassigned_dict_neighbors.values())
+
+            vars_w_max_neighbors = [key for key,value in unassigned_dict_neighbors.items() if value == max_value]
+
+            return vars_w_max_neighbors[0]
 
     def backtrack(self, assignment):
         """
