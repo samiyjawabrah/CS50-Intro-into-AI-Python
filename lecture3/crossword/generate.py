@@ -282,11 +282,6 @@ class CrosswordCreator():
 
                 #matches variable with len of num variables
                 unassigned_dict_values[variable] = len(self.domains[variable])
-
-                neighbors = self.crossword.neighbors[variable]
-
-                #matches variable with num of neighbors
-                unassigned_dict_neighbors[variable] = len(neighbors)
         
 
         min_value = min(unassigned_dict_values.values())
@@ -297,6 +292,13 @@ class CrosswordCreator():
             return vars_w_min_words[0]
         
         elif len(vars_w_min_words) > 1:
+
+            for var in vars_w_min_words:
+
+                neighbors = self.crossword.neighbors[var]
+
+                #matches variable with num of neighbors
+                unassigned_dict_neighbors[var] = len(neighbors)
                 
             max_value = max(unassigned_dict_neighbors.values())
 
