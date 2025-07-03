@@ -192,7 +192,7 @@ class CrosswordCreator():
 
             if self.revise(x,y):
                  
-                 if len(self.domain[x]) == 0:
+                 if len(self.domains[x]) == 0:
                      
                      return False
                  
@@ -211,9 +211,8 @@ class CrosswordCreator():
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-
-        for var in assignment:
-            if assignment[var] == None:
+        for var in self.crossword.variables:
+            if var not in assignment:
                 return False
         return True
 
@@ -223,11 +222,27 @@ class CrosswordCreator():
         puzzle without conflicting characters); return False otherwise.
         """
 
+        if len(set(assignment.values())) != len(assignment):
+            return False
+
         for var in assignment:
 
-            for word in assignment[var]:
-                if var.length != len(word):
-                    return False
+            if var.length != len(assignment[var]):
+                return False
+            
+            for neighbor in self.crossword.neighbors(var):
+
+                if neighbor in assignment:
+                    
+                    overlap = self.crossword.overlaps[var,neighbor]
+
+                    if overlap is None:
+                        continue
+
+                    i,j = overlap
+
+                    if assignment[var][i] != assignment[neighbor][j]:
+                        return False
         return True
 
     def order_domain_values(self, var, assignment):
@@ -276,7 +291,7 @@ class CrosswordCreator():
         unassigned_dict_values = {}
         unassigned_dict_neighbors = {}
 
-        for variable in self.domain:
+        for variable in self.domains:
 
             if variable not in assignment:
 
@@ -295,7 +310,7 @@ class CrosswordCreator():
 
             for var in vars_w_min_words:
 
-                neighbors = self.crossword.neighbors[var]
+                neighbors = self.crossword.neighbors(var)
 
                 #matches variable with num of neighbors
                 unassigned_dict_neighbors[var] = len(neighbors)
@@ -315,9 +330,25 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+        if self.assignment_complete(assignment):
+            return assignment
+        
+        unassigned_var = self.select_unassigned_variable(assignment=assignment)
 
+        for word in self.order_domain_values(unassigned_var, assignment=assignment):
 
+            assignment[unassigned_var] = word
+
+            if self.consistent(assignment=assignment):
+
+                result = self.backtrack(assignment=assignment)
+
+                if result is not None:
+                    return result
+            
+            assignment.pop(unassigned_var)
+        return None
+        
 def main():
 
     # Check usage
