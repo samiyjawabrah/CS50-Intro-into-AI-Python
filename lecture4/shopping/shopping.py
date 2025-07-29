@@ -35,7 +35,6 @@ def load_data(filename):
     """
     Load shopping data from a CSV file `filename` and convert into a list of
     evidence lists and a list of labels. Return a tuple (evidence, labels).
-
     evidence should be a list of lists, where each list contains the
     following values, in order:
         - Administrative, an integer
@@ -59,7 +58,51 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+
+    calender_dict = {
+        'Jan':0,
+        'Feb':1,
+        'Mar':2,
+        'Apr':3,
+        'May':4,
+        'June':5,
+        'Jul':6,
+        'Aug':7,
+        'Sep':8,
+        'Oct':9,
+        'Nov':10,
+        'Dec':11
+    }
+        
+    evidence = []
+    label = []
+
+    with open(filename) as csvfile:
+        doc = csv.DictReader(csvfile)
+
+        for line in doc:
+            result = [int(line['Administrative']),
+                float(line['Administrative_Duration']),
+                int(line['Informational']),
+                float(line['Informational_Duration']),
+                int(line['ProductRelated']),
+                float(line['ProductRelated_Duration']),
+                float(line['BounceRates']),
+                float(line['ExitRates']),
+                float(line['PageValues']),
+                calender_dict[line['Month']],
+                int(line['OperatingSystems']),
+                int(line['Browser']),
+                int(line['Region']),
+                int(line['TrafficType']),
+                1 if line['VisitorType'] == 'Returning_Visitor' else 0,
+                1 if line['Weekend'] == 'TRUE' else 0]
+        
+            revenue_check = 1 if line['Revenue'] == 'TRUE' else 0
+            evidence.append(result)
+            label.append(revenue_check)
+    return (evidence,label)
+    
 
 
 def train_model(evidence, labels):
@@ -67,7 +110,11 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+
+    model = KNeighborsClassifier(n_neighbors=1)
+    model.fit(evidence,labels)
+
+    return model
 
 
 def evaluate(labels, predictions):
@@ -85,8 +132,21 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    
+    total = 0
+    correct = 0
+    incorrect = 0
 
+    for actual, predicted in zip(labels, predictions):
+        total += 1
+
+        if actual == predicted:
+            correct += 1
+        else:
+            incorrect += 1
+    
+    return (correct/total,incorrect/total)
 
 if __name__ == "__main__":
     main()
+
