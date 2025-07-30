@@ -101,7 +101,7 @@ class NimAI():
         Return the Q-value for the state `state` and the action `action`.
         If no Q-value exists yet in `self.q`, return 0.
         """
-        raise NotImplementedError
+        return self.q.get((tuple(state),action),0)
 
     def update_q_value(self, state, action, old_q, reward, future_rewards):
         """
@@ -118,7 +118,7 @@ class NimAI():
         `alpha` is the learning rate, and `new value estimate`
         is the sum of the current reward and estimated future rewards.
         """
-        raise NotImplementedError
+        self.q[(tuple(state),action)] = old_q + self.alpha*((reward + future_rewards) - old_q)
 
     def best_future_reward(self, state):
         """
@@ -130,7 +130,13 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
+        best_q = 0
+
+        possibilities = list(Nim.available_actions(state))
+
+        for poss in possibilities:
+            best_q = max(best_q, self.q.get((tuple(state),poss),0))
+        return best_q
 
     def choose_action(self, state, epsilon=True):
         """
@@ -147,7 +153,22 @@ class NimAI():
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        raise NotImplementedError
+        possibilities = list(Nim.available_actions(state))
+        if epsilon is False:
+            # filter_for_s = {s:q for s,q in self.q.items() if s[0] == state}
+            # best_actions = sorted(filter_for_s, key=lambda x:filter_for_s[x], reverse=True)
+            # return best_actions[0][1]
+            best_q = 0
+            best_action = 0
+            for poss in possibilities:
+                if self.get_q_value(state,poss) > best_q:
+                    best_q = self.get_q_value(tuple(state),poss)
+                    best_action = poss
+            return best_action
+        
+        else:
+            rand_choice = random.choice(possibilities)
+            return rand_choice
 
 
 def train(n):
