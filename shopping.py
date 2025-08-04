@@ -95,10 +95,10 @@ def load_data(filename):
                 int(line['Browser']),
                 int(line['Region']),
                 int(line['TrafficType']),
-                1 if line['VisitorType'].lower() == 'returning_visitor' else 0,
-                1 if line['Weekend'] == 'TRUE' else 0]
+                1 if line['VisitorType'].strip() == 'returning_visitor' else 0,
+                1 if line['Weekend'].upper() == 'TRUE' else 0]
         
-            revenue_check = 1 if line['Revenue'] == 'TRUE' else 0
+            revenue_check = 1 if line['Revenue'].upper() == 'TRUE' else 0
             evidence.append(result)
             label.append(revenue_check)
     return (evidence,label)
@@ -136,7 +136,6 @@ def evaluate(labels, predictions):
     TP = TN = FP = FN = 0
 
     for actual, predicted in zip(labels, predictions):
-        total += 1
 
         if actual == 1 and predicted == 1:
             TP += 1
