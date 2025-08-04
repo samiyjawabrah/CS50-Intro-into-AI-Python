@@ -95,10 +95,10 @@ def load_data(filename):
                 int(line['Browser']),
                 int(line['Region']),
                 int(line['TrafficType']),
-                1 if line['VisitorType'] == 'Returning_Visitor' else 0,
-                1 if line['Weekend'] == 'TRUE' else 0]
+                1 if line['VisitorType'].strip() == 'returning_visitor' else 0,
+                1 if line['Weekend'].upper() == 'TRUE' else 0]
         
-            revenue_check = 1 if line['Revenue'] == 'TRUE' else 0
+            revenue_check = 1 if line['Revenue'].upper() == 'TRUE' else 0
             evidence.append(result)
             label.append(revenue_check)
     return (evidence,label)
@@ -133,19 +133,23 @@ def evaluate(labels, predictions):
     actual negative labels that were accurately identified.
     """
     
-    total = 0
-    correct = 0
-    incorrect = 0
+    TP = TN = FP = FN = 0
 
     for actual, predicted in zip(labels, predictions):
-        total += 1
 
-        if actual == predicted:
-            correct += 1
-        else:
-            incorrect += 1
+        if actual == 1 and predicted == 1:
+            TP += 1
+        elif actual == 0 and predicted == 0:
+            TN += 1
+        elif actual == 0 and predicted == 1:
+            FP += 1
+        elif actual == 1 and predicted == 0:
+            FN += 1
+
+        sensitivity = TP / (TP + FN) if (TP + FN) else 0
+        specificity = TN / (TN + FP) if (TN + FP) else 0
     
-    return (correct/total,incorrect/total)
+    return (sensitivity,specificity)
 
 if __name__ == "__main__":
     main()
