@@ -58,18 +58,26 @@
 # print(smart.toggle())
 # print(smart.toggle())
 
-print(type(1+0.0))
-print(type(0.1))
-print(type(1))
-print(type(3/5))
-print(0.1+0.2)
+# print(type(1+0.0))
+# print(type(0.1))
+# print(type(1))
+# print(type(3/5))
+# print(0.1+0.2)
 
-print(0.3 == (1+2)/10)
+# print(0.3 == (1+2)/10)
 
-a = [1,2]
-b = [3,4]
+# a = [1,2]
+# b = [3,4]
 
-c = a+b
-print(c)
+# c = a+b
+# print(c)
 
-  
+# s = 'Hi my name is Sami'
+
+# print(s.lower())
+
+x = ['1','2','3','4']
+
+new = "".join(x)
+
+print(new)
